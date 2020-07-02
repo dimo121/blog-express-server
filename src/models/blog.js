@@ -30,7 +30,11 @@ const blogSchema = new mongoose.Schema({
             type: String,
             required: true
         }
-    }]
+    }],
+    owner: {
+        type: String,
+        required: true
+    }
 })
 
 blogSchema.methods.toJSON = function () {

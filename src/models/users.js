@@ -46,11 +46,11 @@ const userSchema = new mongoose.Schema({
 
 userSchema.methods.generateAuthToken = async function () {
     const user = this
-    console.log('testing')
+    
     const token = jwt.sign({ _id: user._id.toString() }, 'secretcharacters')
-    console.log(token)
+    
     user.tokens = user.tokens.concat({ token })
-    console.log(user)
+    
     await user.save()
 
     return token
@@ -76,6 +76,22 @@ userSchema.methods.toJSON = function () {
     
     return userObject
 }
+
+userSchema.statics.findByCredentials = async (email,password) => {
+    const user = await User.findOne({ email })
+
+    if(!user){
+        throw new Error('Unable to login')
+    }
+
+    const match = await bcrypt.compare(password, user.password)
+
+    if(!match){
+        throw new Error('Unable to login')
+    }
+
+    return user
+} 
 
 const User = mongoose.model('User', userSchema)
 
